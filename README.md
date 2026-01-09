@@ -24,14 +24,10 @@ the [wire format][] or parser developers, in addition to reverse-engineering.
 
 ## Usage
 
-You can install with pip:
+Build and run the .NET command-line app:
 
-    pip install protobuf-inspector
-
-This installs the `protobuf_inspector` command. Run it, feeding the protobuf blob
-on stdin:
-
-    protobuf_inspector < my-protobuf-blob
+    dotnet build src/ProtobufInspector
+    dotnet run --project src/ProtobufInspector -- < my-protobuf-blob
 
 After reading the first (blind) analysis of the blob, you typically start defining
 some of the fields so protobuf-inspector can better parse your blobs, until you get
@@ -80,24 +76,24 @@ There are some tricks you can use to save time when approaching a blob:
     default. If you have lots of message types defined, you can pass a type name as
     optional argument, and protobuf-inspector will use that instead of `root`:
     
-        protobuf_inspector request < my-protobuf-blob
+    dotnet run --project src/ProtobufInspector -- request < my-protobuf-blob
 
 ## Programmatic access
 
 Simple example:
 
-~~~ python
-from protobuf_inspector.types import StandardParser
+~~~ csharp
+using ProtobufInspector;
 
-parser = StandardParser()
-with open('my-blob', 'rb') as fh:
-   output = parser.parse_message(fh, "message")
-print(output)
+StandardParser parser = new();
+using FileStream stream = File.OpenRead("my-blob");
+string output = parser.ParseMessage(stream, "message");
+Console.WriteLine(output);
 ~~~
 
 This project was not initially designed for use as a library, though,
-and its API might change. For a more complex example,
-see `protobuf_inspector/__main__.py`.
+and its API might change. For the CLI entry point,
+see `src/ProtobufInspector/Program.cs`.
 
 
 
